@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        h1 {
+            color: #bb86fc;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 18px;
+            width: 250px;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            border: 2px solid #bb86fc;
+            border-radius: 5px;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #bb86fc;
+            color: #121212;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+        p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Guess the Number!</h1>
+    <p id="rangeText">Enter a number between 1 and 100:</p>
+    <input type="number" id="guessInput" min="1" max="100" placeholder="Your guess">
+    <button onclick="guessNumber()">Submit Guess</button>
+
+    <script>
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+        let guesses = 0;
+        let guessedNumbers = {}; // Object to store guessed numbers and their results
+        let minRange = 1;
+        let maxRange = 100;
+
+        // Event listener for Enter key
+        document.getElementById("guessInput").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                guessNumber();
+            }
+        });
+
+        function guessNumber() {
+            let userGuess = parseInt(document.getElementById("guessInput").value);
+            if (!userGuess || userGuess < minRange || userGuess > maxRange) {
+                alert(`Please enter a valid number between ${minRange} and ${maxRange}.`);
+                return;
+            }
+
+            if (userGuess in guessedNumbers) {
+                let result = guessedNumbers[userGuess];
+                alert(`You've already guessed ${userGuess}. It was ${result}. Try a different number!`);
+                document.getElementById("guessInput").value = '';
+                return;
+            }
+
+            guesses++;
+
+            if (userGuess === randomNumber) {
+                alert(`Correct! The number was ${randomNumber}. It took you ${guesses} guess(es).`);
+                resetGame();
+            } else if (userGuess > randomNumber) {
+                guessedNumbers[userGuess] = "too high";
+                maxRange = userGuess - 1;
+                alert("Too high! Try again.");
+            } else {
+                guessedNumbers[userGuess] = "too low";
+                minRange = userGuess + 1;
+                alert("Too low! Try again.");
+            }
+
+            updateRangeText();
+            document.getElementById("guessInput").value = '';
+        }
+
+        function updateRangeText() {
+            document.getElementById("rangeText").textContent = `Enter a number between ${minRange} and ${maxRange}:`;
+            document.getElementById("guessInput").min = minRange;
+            document.getElementById("guessInput").max = maxRange;
+        }
+
+        function resetGame() {
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+            guesses = 0;
+            guessedNumbers = {}; // Reset the guessed numbers object
+            minRange = 1;
+            maxRange = 100;
+            updateRangeText();
+            document.getElementById("guessInput").value = '';
+        }
+
+        // Initialize the range text
+        updateRangeText();
+    </script>
+
+</body>
+</html>
